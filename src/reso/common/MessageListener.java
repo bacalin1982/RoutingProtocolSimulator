@@ -13,7 +13,7 @@ package reso.common;
 public interface MessageListener<M extends Message>
 {
 
-    public void receive(HardwareInterface<M> iface, M msg)
+    void receive(HardwareInterface<M> iface, M msg)
     	throws Exception;
 
 }

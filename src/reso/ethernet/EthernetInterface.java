@@ -28,9 +28,7 @@ public class EthernetInterface
     public boolean hasAddr(EthernetAddress addr) {
     	if (this.addr.equals(addr))
     		return true;
-    	if (addr.isBroadcast())
-    		return true;
-    	return false;
+        return addr.isBroadcast();
     }
 	    
     public void receive(EthernetFrame frame)

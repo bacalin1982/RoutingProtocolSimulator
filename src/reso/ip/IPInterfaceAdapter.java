@@ -17,21 +17,21 @@ extends Interface {
 
 	String ATTR_METRIC= "metric";
 	
-	public String getName();
-	public IPLayer getIPLayer();
+	String getName();
+	IPLayer getIPLayer();
 	
-	public boolean hasAddress(IPAddress addr);
-	public void addAddress(IPAddress addr);
-	public IPAddress getAddress();
+	boolean hasAddress(IPAddress addr);
+	void addAddress(IPAddress addr);
+	IPAddress getAddress();
 	
-    public void setMetric(int metric)
+    void setMetric(int metric)
     	throws Exception;
-    public int getMetric();
+    int getMetric();
     
-	public void send(Datagram datagram, IPAddress nexthop)
+	void send(Datagram datagram, IPAddress nexthop)
 		throws Exception;
 	
-    public void addListener(IPInterfaceListener l);
-    public void removeListener(IPInterfaceListener l);
+    void addListener(IPInterfaceListener l);
+    void removeListener(IPInterfaceListener l);
 
 }

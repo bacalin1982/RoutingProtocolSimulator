@@ -13,23 +13,23 @@ package reso.common;
 public interface Interface
 {
 	
-    public String getName();
-    public String getType();
-    public int getIndex();
-    public Node getNode();
-    public void setIndex(int index);
+    String getName();
+    String getType();
+    int getIndex();
+    Node getNode();
+    void setIndex(int index);
     
-    public void up();
-    public void down();
-    public boolean isActive();
+    void up();
+    void down();
+    boolean isActive();
         
     
     // --- ATTRIBUTES MANAGEMENT ---
     
     String STATE= "state";
     
-    public Object getAttribute(String attr);
-    public void addAttrListener(InterfaceAttrListener l);
-    public void removeAttrListener(InterfaceAttrListener l);
+    Object getAttribute(String attr);
+    void addAttrListener(InterfaceAttrListener l);
+    void removeAttrListener(InterfaceAttrListener l);
     
 }

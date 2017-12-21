@@ -17,10 +17,10 @@ extends Interface
 	// --- MESSAGE TRANSMISSION / RECEPTION ---
 	
 	/* Send a message through that interface (typ. to the connected medium) */
-	public void receive(M m)
+    void receive(M m)
 		throws Exception;
 	/* Receive a message from this interface (typ. from the connected medium) */
-	public void send(M m)
+    void send(M m)
 		throws Exception;
 	
 	
@@ -30,12 +30,12 @@ extends Interface
 		throws Exception;
 	boolean isConnected();
     boolean isConnectedTo(Link<M> link);
-    public Link<M> getLink();
+    Link<M> getLink();
 
     
     // --- MESSAGE LISTENERS MANAGEMENT ---
     
-    public void addListener(MessageListener<M> l);
-    public void removeListener(MessageListener<M> l);
+    void addListener(MessageListener<M> l);
+    void removeListener(MessageListener<M> l);
 	
 }

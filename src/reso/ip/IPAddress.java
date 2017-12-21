@@ -97,7 +97,7 @@ public class IPAddress
     	int hc= 0;
     	int i;
     	for (i= 0; i < addr.length; i++)
-    		hc+= (((int) (addr[i]+128)) << (8*i));
+    		hc+= (addr[i]+128 << (8*i));
     	return hc;
     }
     

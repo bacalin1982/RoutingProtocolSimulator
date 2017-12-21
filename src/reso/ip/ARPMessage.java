@@ -16,7 +16,7 @@ import reso.ethernet.EthernetAddress;
 public class ARPMessage
 implements Message {
 
-	public static enum Type {
+	public enum Type {
 		REQUEST, RESPONSE
 	}
 	
