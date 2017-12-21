@@ -1,0 +1,11 @@
+#OS junk files
+[Tt]humbs.db
+*.DS_Store
+
+out/*
+src/META-INF/*
+.idea/*
+
+#Java project
+*.xml
+*.class
