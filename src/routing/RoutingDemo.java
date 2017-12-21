@@ -1,7 +1,9 @@
 package routing;
 
+import reso.common.Network;
 import reso.scheduler.AbstractScheduler;
 import reso.scheduler.Scheduler;
+import reso.utilities.NetworkBuilder;
 
 public class RoutingDemo {
 
@@ -14,11 +16,11 @@ public class RoutingDemo {
         AbstractScheduler scheduler= new Scheduler();
 
         try{
-
+            Network network= NetworkBuilder.loadTopology(filename, scheduler);
         }
         catch (Exception e) {
-        System.err.println(e.getMessage());
-        e.printStackTrace(System.err);
-    }
+            System.err.println(e.getMessage());
+            e.printStackTrace(System.err);
+        }
     }
 }
