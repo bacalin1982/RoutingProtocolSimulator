@@ -1,4 +1,4 @@
-package routing;
+package reso.examples.lsp_routing;
 
 import reso.common.AbstractApplication;
 import reso.common.Interface;
