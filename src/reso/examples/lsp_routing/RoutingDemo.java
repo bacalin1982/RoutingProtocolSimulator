@@ -19,6 +19,7 @@ public class RoutingDemo {
         AbstractScheduler scheduler= new Scheduler();
 
         try{
+            System.out.println(Constants._T);
             Network network= NetworkBuilder.loadTopology(filename, scheduler);
 
             // Add routing protocol application to each router

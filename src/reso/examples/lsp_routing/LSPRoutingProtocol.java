@@ -1,5 +1,6 @@
 package reso.examples.lsp_routing;
 
+import com.sun.tools.javac.code.Attribute;
 import org.omg.PortableServer.POA;
 import reso.common.AbstractApplication;
 import reso.common.Interface;
@@ -36,13 +37,12 @@ public class LSPRoutingProtocol
 
         //Send Hello message first
         for(IPInterfaceAdapter iface: ip.getInterfaces()){
-            System.out.println(getRouterID()+ " : " + iface.toString());
             if(iface instanceof IPLoopbackAdapter)
                     continue;
             HelloMessage hm = new HelloMessage();
             hm.addHello(getRouterID(), new ArrayList<IPAddress>());
             Datagram d = new Datagram(iface.getAddress(), IPAddress.BROADCAST, IP_PROTO_HELLO, 1, hm);
-            System.out.println("Sending :" + d.toString());
+            System.out.println(Constants._I+Constants.SEND(getRouterID().toString(), iface.toString(), d.toString()));
             iface.send(d, null);
         }
     }
@@ -60,8 +60,7 @@ public class LSPRoutingProtocol
     @Override
     public void receive(IPInterfaceAdapter src, Datagram datagram) throws Exception {
         if(datagram.getProtocol() == IP_PROTO_HELLO){
-            System.out.println("Hello Message received:");
-            System.out.println(datagram.toString());
+            System.out.println(Constants._I+Constants.RECEIVE(getRouterID().toString(), src.toString(), datagram.toString()));
         }
     }
 
