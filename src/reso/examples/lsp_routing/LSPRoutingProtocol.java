@@ -6,6 +6,8 @@ import reso.common.Interface;
 import reso.common.InterfaceAttrListener;
 import reso.ip.*;
 
+import java.util.ArrayList;
+
 public class LSPRoutingProtocol
         extends AbstractApplication
         implements IPInterfaceListener, InterfaceAttrListener {
@@ -34,11 +36,14 @@ public class LSPRoutingProtocol
 
         //Send Hello message first
         for(IPInterfaceAdapter iface: ip.getInterfaces()){
+            System.out.println(getRouterID()+ " : " + iface.toString());
             if(iface instanceof IPLoopbackAdapter)
                     continue;
             HelloMessage hm = new HelloMessage();
-            hm.addHello(getRouterID(), null);
-            iface.send(new Datagram(iface.getAddress(), IPAddress.BROADCAST, IP_PROTO_HELLO, 1, hm), null);
+            hm.addHello(getRouterID(), new ArrayList<IPAddress>());
+            Datagram d = new Datagram(iface.getAddress(), IPAddress.BROADCAST, IP_PROTO_HELLO, 1, hm);
+            System.out.println("Sending :" + d.toString());
+            iface.send(d, null);
         }
     }
 
