@@ -61,6 +61,8 @@ public class LSPRoutingProtocol
     public void receive(IPInterfaceAdapter src, Datagram datagram) throws Exception {
         if(datagram.getProtocol() == IP_PROTO_HELLO){
             System.out.println(Constants._I+Constants.RECEIVE(getRouterID().toString(), src.toString(), datagram.toString()));
+            // Here, we have to check if the source ip that sent the message is not known id neighbours list and add it if not.
+            // And resent Hello messsage with Neighnours list complete
         }
     }
 
