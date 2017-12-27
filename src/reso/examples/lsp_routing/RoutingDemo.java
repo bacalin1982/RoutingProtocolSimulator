@@ -35,7 +35,7 @@ public class RoutingDemo {
             scheduler.run();
 
             // Display forwarding table for each node
-            FIBDumper.dumpForAllRouters(network);
+            //FIBDumper.dumpForAllRouters(network);
         }
         catch (Exception e) {
             System.err.println(e.getMessage());
