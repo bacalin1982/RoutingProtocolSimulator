@@ -15,8 +15,7 @@ public class Constants {
     public static final String _S = "       : ";
 
     /* Strings */
-    public static String SEND(String r, String i, String d){
-        return r + " on " + i + " SEND\t\t->\t" + d;
+    public static String SEND(String r, String i, String t, String d){ return r + " on " + i + " SEND\t[" + t + "]\t->\t" + d;
     }
-    public static String RECEIVE(String r, String i, String d){ return r + " on " + i + " RECEIVE\t<-\t" + d; }
+    public static String RECEIVE(String r, String i, String t, String d){ return r + " on " + i + " RCVE\t[" + t + "]\t<-\t" + d; }
 }
