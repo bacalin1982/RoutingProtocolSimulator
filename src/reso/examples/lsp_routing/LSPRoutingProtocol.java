@@ -89,8 +89,10 @@ public class LSPRoutingProtocol extends AbstractApplication implements IPInterfa
         } else if (msg instanceof LSPMessage) {
             System.out.println(Constants._I + Constants.RECEIVE(getRouterID().toString(), src.toString(), "LSP", datagram.toString()));
             LSPMessage lspMsg = (LSPMessage) msg;
+            lspMsg.addInLSDB(((LSPMessage) msg).getOrigin(), ((LSPMessage) msg).getNumSeq());
             this.LSDB.put(datagram.src, lspMsg);
-            //sendLSP(src, lspMsg);
+            System.out.println(this.LSDB);
+            sendLSP(src, lspMsg);
            /* for(IPInterfaceAdapter iface: ip.getInterfaces()) {
                 if (iface instanceof IPLoopbackAdapter)
                     continue;

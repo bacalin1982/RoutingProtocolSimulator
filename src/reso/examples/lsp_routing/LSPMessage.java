@@ -36,14 +36,18 @@ public class LSPMessage implements Message {
         this.oif = oif;
     }
 
+    public void addInLSDB(IPAddress src, int numSeq){
+        this.lsp.put(src, numSeq);
+    }
+
     @Override
     public String toString() {
         String lsdb = "";
-        for(IPAddress key: lsp.keySet()){
+        for(IPAddress key: this.lsp.keySet()){
             //if(origin.equals(key)) {
-                lsdb += key + "[" + lsp.get(key) + "] ";
+            lsdb += "(" + key + "; " + this.lsp.get(key) + "),";
             //}
         }
-        return "LSP[FROM="+origin+" ; NUMSEQ="+numSeq+" ; LSDB=["+lsdb+"]";
+        return "LSP[FROM="+origin+" ; NUMSEQ="+numSeq+" ; LSDB={"+lsdb+"}]";
     }
 }
