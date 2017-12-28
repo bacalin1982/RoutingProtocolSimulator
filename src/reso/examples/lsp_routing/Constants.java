@@ -1,7 +1,5 @@
 package reso.examples.lsp_routing;
 
-import com.sun.istack.internal.NotNull;
-
 public class Constants {
     /* Title */
     public static final String _T = " ---------------------- \n"+

@@ -1,12 +1,10 @@
 package reso.examples.lsp_routing;
 
-import reso.common.AbstractTimer;
 import reso.common.Network;
 import reso.common.Node;
 import reso.ip.IPRouter;
 import reso.scheduler.AbstractScheduler;
 import reso.scheduler.Scheduler;
-import reso.utilities.FIBDumper;
 import reso.utilities.NetworkBuilder;
 
 public class RoutingDemo {
