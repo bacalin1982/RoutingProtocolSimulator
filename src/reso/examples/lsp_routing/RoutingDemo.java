@@ -1,5 +1,6 @@
 package reso.examples.lsp_routing;
 
+import reso.common.AbstractTimer;
 import reso.common.Network;
 import reso.common.Node;
 import reso.ip.IPRouter;
@@ -17,7 +18,6 @@ public class RoutingDemo {
         String filename= RoutingDemo.class.getClassLoader().getResource(TOPO_FILE).getFile();
 
         AbstractScheduler scheduler= new Scheduler();
-
         try{
             System.out.println(Constants._T);
             Network network= NetworkBuilder.loadTopology(filename, scheduler);
@@ -27,8 +27,7 @@ public class RoutingDemo {
                 if (!(n instanceof IPRouter))
                     continue;
                 IPRouter router= (IPRouter) n;
-                boolean advertise= true;
-                router.addApplication(new LSPRoutingProtocol(router, advertise));
+                router.addApplication(new LSPRoutingProtocol(router));
                 router.start();
             }
 
