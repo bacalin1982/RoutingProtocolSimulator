@@ -27,7 +27,7 @@ public class RoutingDemo {
                 if (!(n instanceof IPRouter))
                     continue;
                 IPRouter router= (IPRouter) n;
-                router.addApplication(new LSPRoutingProtocol(router, intervalHello, intervalLSP));
+                router.addApplication(new LSPRoutingProtocol(router, intervalHello, intervalLSP, scheduler));
                 router.start();
             }
 

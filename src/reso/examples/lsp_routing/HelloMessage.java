@@ -26,6 +26,6 @@ public class HelloMessage implements Message {
             String ns = "";
             for (IPAddress n : neighbours)
                 ns += n.toString() + "; ";
-            return "Hello[" + origin + ", neigbours:" + ns + "]";
+            return "HELLO[FROM=" + origin + " ; NEIGHBOURS=[" + ns + "]";
         }
 }

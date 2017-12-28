@@ -1,12 +1,12 @@
 package reso.examples.lsp_routing;
 
 
-import reso.common.AbstractApplication;
-import reso.common.Interface;
-import reso.common.InterfaceAttrListener;
-import reso.common.Message;
+import reso.common.*;
 import reso.ip.*;
+import reso.scheduler.AbstractEvent;
+import reso.scheduler.AbstractScheduler;
 
+import javax.annotation.processing.SupportedSourceVersion;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,6 +22,7 @@ public class LSPRoutingProtocol extends AbstractApplication implements IPInterfa
 
     private int intervalHello;
     private int intervalLSP;
+    private AbstractScheduler scheduler;
 
     //All ip of network
     private List<IPAddress> neighbours = new ArrayList<>();
@@ -29,12 +30,13 @@ public class LSPRoutingProtocol extends AbstractApplication implements IPInterfa
     private Map<IPAddress, Integer> metric = new HashMap<>();
 
     /* Constructor */
-    public LSPRoutingProtocol(IPRouter router, int intervalHello, int intervalLSP) {
+    public LSPRoutingProtocol(IPRouter router, int intervalHello, int intervalLSP, AbstractScheduler scheduler) {
         super(router, PROTOCOL_LSP_NAME);
         this.router = router;
         this.ip = router.getIPLayer();
         this.intervalHello = intervalHello;
         this.intervalLSP = intervalLSP;
+        this.scheduler = scheduler;
     }
 
     /* Override Methods */
@@ -46,11 +48,11 @@ public class LSPRoutingProtocol extends AbstractApplication implements IPInterfa
         for (IPInterfaceAdapter iface : ip.getInterfaces())
             iface.addListener(this);
 
-        //Send Hello message first
-        for (IPInterfaceAdapter iface : ip.getInterfaces()) {
+        //Launching neighbours discorvery
+        for (IPInterfaceAdapter iface : this.ip.getInterfaces()) {
             if (iface instanceof IPLoopbackAdapter)
                 continue;
-            HelloMessage hm = new HelloMessage(getRouterID(), neighbours);
+            HelloMessage hm = new HelloMessage(getRouterID(), this.neighbours);
             Datagram d = new Datagram(iface.getAddress(), IPAddress.BROADCAST, IP_PROTO_LSP, 1, hm);
             System.out.println(Constants._I + Constants.SEND(getRouterID().toString(), iface.toString(), "HELLO", d.toString()));
             iface.send(d, null);
@@ -79,9 +81,9 @@ public class LSPRoutingProtocol extends AbstractApplication implements IPInterfa
         if (msg instanceof HelloMessage) {
             System.out.println(Constants._I + Constants.RECEIVE(getRouterID().toString(), src.toString(), "HELLO", datagram.toString()));
             HelloMessage hm = (HelloMessage) msg;
-            if (!neighbours.contains(hm.getOrigin())) {
-                neighbours.add(hm.getOrigin());
-                metric.put(hm.getOrigin(), src.getMetric());
+            if (!this.neighbours.contains(hm.getOrigin())) {
+                this.neighbours.add(hm.getOrigin());
+                this.metric.put(hm.getOrigin(), src.getMetric());
 
                 /*for(IPAddress key: metric.keySet()){
                     System.out.println("metric "+key+"["+metric.get(key)+"]");
@@ -90,8 +92,8 @@ public class LSPRoutingProtocol extends AbstractApplication implements IPInterfa
         } else if (msg instanceof LSPMessage) {
             System.out.println(Constants._I + Constants.RECEIVE(getRouterID().toString(), src.toString(), "LSP", datagram.toString()));
             LSPMessage lspMsg = (LSPMessage) msg;
-            LSDB.put(datagram.src, lspMsg);
-            sendLSP(src, lspMsg);
+            this.LSDB.put(datagram.src, lspMsg);
+            //sendLSP(src, lspMsg);
            /* for(IPInterfaceAdapter iface: ip.getInterfaces()) {
                 if (iface instanceof IPLoopbackAdapter)
                     continue;

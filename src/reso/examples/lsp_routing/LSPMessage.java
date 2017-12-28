@@ -44,6 +44,6 @@ public class LSPMessage implements Message {
                 lsdb += key + "[" + lsp.get(key) + "] ";
             //}
         }
-        return "LSP "+origin+" "+numSeq+" LSDB["+lsdb+"]";
+        return "LSP[FROM="+origin+" ; NUMSEQ="+numSeq+" ; LSDB=["+lsdb+"]";
     }
 }
