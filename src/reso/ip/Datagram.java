@@ -41,7 +41,7 @@ extends AbstractMessageWithPayload
     }
 
     public String toString() {
-    	return "src=" + src + ", dst=" + dst + ",proto=" + getProtocol() +
+    	return "src=" + src + ", dst=" + dst + ", proto=" + getProtocol() +
     		", payload=[" + getPayload() + "]";
     }
     
