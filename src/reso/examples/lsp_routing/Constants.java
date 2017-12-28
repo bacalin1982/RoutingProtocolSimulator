@@ -20,4 +20,12 @@ public class Constants {
     public static String RECEIVE(String r, String i, String d){
         return r + " on " + i + " RECEIVE -> " + d;
     }
+
+    public static String SENDLSP(String r, String i, String d){
+        return r + " on " + i + " SEND LSP -> " + d;
+    }
+
+    public static String RECEIVELSP(String r, String i, String d){
+        return r + " on " + i + " RECEIVE LSP -> " + d;
+    }
 }

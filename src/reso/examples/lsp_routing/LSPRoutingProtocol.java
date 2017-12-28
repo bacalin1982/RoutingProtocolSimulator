@@ -8,7 +8,9 @@ import reso.common.Message;
 import reso.ip.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class LSPRoutingProtocol
         extends AbstractApplication
@@ -23,6 +25,8 @@ public class LSPRoutingProtocol
 
     //All ip of network
     private List<IPAddress> neighbours = new ArrayList<>();
+    private Map<IPAddress, LSPMessage> LSDB = new HashMap<>();
+    private Map<IPAddress, Integer> metric = new HashMap<>();
 
     public LSPRoutingProtocol(IPRouter router, boolean advertise){
         super(router, PROTOCOL_LSP_NAME);
@@ -48,6 +52,28 @@ public class LSPRoutingProtocol
             System.out.println(Constants._I+Constants.SEND(getRouterID().toString(), iface.toString(), d.toString()));
             iface.send(d, null);
         }
+
+        //Send LSP message
+        sendLSP(null, makeLSP(getRouterID(), null));
+
+    }
+
+    private LSPMessage makeLSP(IPAddress origin, IPInterfaceAdapter oif) {
+        Map<IPAddress, Integer> lsp = new HashMap<>();
+        for(IPAddress key: metric.keySet()){
+            lsp.put(key, metric.get(key));
+        }
+        return new LSPMessage(origin, 0, lsp, oif);
+    }
+    private void sendLSP(IPInterfaceAdapter src, LSPMessage lspMsg) throws Exception{
+        for(IPInterfaceAdapter iface: ip.getInterfaces()) {
+            if (iface instanceof IPLoopbackAdapter || iface.equals(src))
+                continue;
+            lspMsg.setOif(iface);
+            Datagram d = new Datagram(iface.getAddress(), IPAddress.BROADCAST, IP_PROTO_LSP, 1, lspMsg);
+            System.out.println(Constants._I+Constants.SENDLSP(getRouterID().toString(), iface.toString(), d.toString()));
+            iface.send(d, null);
+        }
     }
 
     @Override
@@ -68,11 +94,29 @@ public class LSPRoutingProtocol
         if(msg instanceof HelloMessage){
             // Here, we have to check if the source ip that sent the message is not known id neighbours list and add it if not.
             // And resent Hello messsage with Neighnours list complete
+            System.out.println(Constants._I+Constants.RECEIVE(getRouterID().toString(), src.toString(), datagram.toString()));
             HelloMessage hm = (HelloMessage)msg;
             if(!neighbours.contains(hm.getOrigin())){
                 neighbours.add(hm.getOrigin());
+                metric.put(hm.getOrigin(), src.getMetric());
+
+                /*for(IPAddress key: metric.keySet()){
+                    System.out.println("metric "+key+"["+metric.get(key)+"]");
+                }*/
             }
-            System.out.println(Constants._I+Constants.RECEIVE(getRouterID().toString(), src.toString(), datagram.toString()));
+        }else if(msg instanceof LSPMessage){
+            System.out.println(Constants._I+Constants.RECEIVELSP(getRouterID().toString(), src.toString(), datagram.toString()));
+            LSPMessage lspMsg = (LSPMessage)msg;
+            LSDB.put(datagram.src, lspMsg);
+            sendLSP(src, lspMsg);
+           /* for(IPInterfaceAdapter iface: ip.getInterfaces()) {
+                if (iface instanceof IPLoopbackAdapter)
+                    continue;
+                LSPMessage newLspMsg = makeLSP(getRouterID(), src);
+                Datagram d = new Datagram(iface.getAddress(), IPAddress.BROADCAST, IP_PROTO_LSP, 1, newLspMsg);
+                System.out.println(Constants._I+Constants.SENDLSP(getRouterID().toString(), iface.toString(), d.toString()));
+                iface.send(d, null);
+            }*/
         }
     }
 
