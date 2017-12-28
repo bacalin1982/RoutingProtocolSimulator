@@ -19,16 +19,14 @@ public class LSPRoutingProtocol
 
     private final IPRouter router;
     private final IPLayer ip;
-    private final boolean advertise;
 
     //All ip of network
     private List<IPAddress> neighbours = new ArrayList<>();
 
-    public LSPRoutingProtocol(IPRouter router, boolean advertise){
+    public LSPRoutingProtocol(IPRouter router){
         super(router, PROTOCOL_LSP_NAME);
         this.router = router;
         this.ip = router.getIPLayer();
-        this.advertise = advertise;
     }
 
     @Override
@@ -66,8 +64,6 @@ public class LSPRoutingProtocol
     public void receive(IPInterfaceAdapter src, Datagram datagram) throws Exception {
         Message msg = datagram.getPayload();
         if(msg instanceof HelloMessage){
-            // Here, we have to check if the source ip that sent the message is not known id neighbours list and add it if not.
-            // And resent Hello messsage with Neighnours list complete
             HelloMessage hm = (HelloMessage)msg;
             if(!neighbours.contains(hm.getOrigin())){
                 neighbours.add(hm.getOrigin());
