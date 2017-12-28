@@ -17,7 +17,5 @@ public class Constants {
         return r + " on " + i + " SEND -> " + d;
     }
 
-    public static String RECEIVE(String r, String i, String d){
-        return r + " on " + i + " RECEIVE -> " + d;
-    }
+    public static String RECEIVE(String r, String i, String d){ return r + " on " + i + " RECEIVE -> " + d; }
 }
