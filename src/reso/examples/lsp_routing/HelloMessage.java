@@ -6,8 +6,8 @@ import java.util.List;
 
 public class HelloMessage implements Message {
 
-    public final IPAddress origin;
-    public List<IPAddress> neighbours;
+    private final IPAddress origin;
+    private List<IPAddress> neighbours;
 
     public HelloMessage(IPAddress origin, List<IPAddress> neighbours) {
         this.origin = origin;
