@@ -3,10 +3,7 @@ package reso.examples.lsp_routing;
 
 import reso.common.*;
 import reso.ip.*;
-import reso.scheduler.AbstractEvent;
 import reso.scheduler.AbstractScheduler;
-
-import javax.annotation.processing.SupportedSourceVersion;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
