@@ -2,8 +2,6 @@ package reso.examples.lsp_routing;
 
 import reso.common.Message;
 import reso.ip.IPAddress;
-
-import java.util.ArrayList;
 import java.util.List;
 
 public class HelloMessage implements Message {
