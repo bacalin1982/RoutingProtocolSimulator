@@ -1,28 +1,32 @@
 package reso.examples.lsp_routing;
 
-import com.sun.tools.javac.code.Attribute;
-import org.omg.PortableServer.POA;
+
 import reso.common.AbstractApplication;
 import reso.common.Interface;
 import reso.common.InterfaceAttrListener;
+import reso.common.Message;
 import reso.ip.*;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class LSPRoutingProtocol
         extends AbstractApplication
         implements IPInterfaceListener, InterfaceAttrListener {
 
     public static final String PROTOCOL_LSP_NAME = "LSP_ROUTING";
-    public static final String PROTOCOL_HELLO_NAME = "=HELLO_ROUTING";
     public static final int IP_PROTO_LSP = Datagram.allocateProtocolNumber(PROTOCOL_LSP_NAME);
-    public static final int IP_PROTO_HELLO = Datagram.allocateProtocolNumber(PROTOCOL_HELLO_NAME);
 
+    private final IPRouter router;
     private final IPLayer ip;
     private final boolean advertise;
 
+    //All ip of network
+    private List<IPAddress> neighbours = new ArrayList<>();
+
     public LSPRoutingProtocol(IPRouter router, boolean advertise){
         super(router, PROTOCOL_LSP_NAME);
+        this.router = router;
         this.ip = router.getIPLayer();
         this.advertise = advertise;
     }
@@ -30,7 +34,7 @@ public class LSPRoutingProtocol
     @Override
     public void start() throws Exception {
         // Register listener for datagrams with HELLO routing messages
-        ip.addListener(IP_PROTO_HELLO, this);
+        ip.addListener(IP_PROTO_LSP, this);
 
         for(IPInterfaceAdapter iface: ip.getInterfaces())
             iface.addListener(this);
@@ -38,10 +42,9 @@ public class LSPRoutingProtocol
         //Send Hello message first
         for(IPInterfaceAdapter iface: ip.getInterfaces()){
             if(iface instanceof IPLoopbackAdapter)
-                    continue;
-            HelloMessage hm = new HelloMessage();
-            hm.addHello(getRouterID(), new ArrayList<IPAddress>());
-            Datagram d = new Datagram(iface.getAddress(), IPAddress.BROADCAST, IP_PROTO_HELLO, 1, hm);
+                continue;
+            HelloMessage hm = new HelloMessage(getRouterID(), neighbours);
+            Datagram d = new Datagram(iface.getAddress(), IPAddress.BROADCAST, IP_PROTO_LSP, 1, hm);
             System.out.println(Constants._I+Constants.SEND(getRouterID().toString(), iface.toString(), d.toString()));
             iface.send(d, null);
         }
@@ -49,7 +52,9 @@ public class LSPRoutingProtocol
 
     @Override
     public void stop() {
-
+        this.ip.removeListener(IP_PROTO_LSP, this);
+        for (IPInterfaceAdapter iface: ip.getInterfaces())
+            iface.removeListener(this);
     }
 
     @Override
@@ -59,10 +64,15 @@ public class LSPRoutingProtocol
 
     @Override
     public void receive(IPInterfaceAdapter src, Datagram datagram) throws Exception {
-        if(datagram.getProtocol() == IP_PROTO_HELLO){
-            System.out.println(Constants._I+Constants.RECEIVE(getRouterID().toString(), src.toString(), datagram.toString()));
+        Message msg = datagram.getPayload();
+        if(msg instanceof HelloMessage){
             // Here, we have to check if the source ip that sent the message is not known id neighbours list and add it if not.
             // And resent Hello messsage with Neighnours list complete
+            HelloMessage hm = (HelloMessage)msg;
+            if(!neighbours.contains(hm.getOrigin())){
+                neighbours.add(hm.getOrigin());
+            }
+            System.out.println(Constants._I+Constants.RECEIVE(getRouterID().toString(), src.toString(), datagram.toString()));
         }
     }
 
