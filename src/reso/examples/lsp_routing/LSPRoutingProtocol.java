@@ -20,16 +20,21 @@ public class LSPRoutingProtocol extends AbstractApplication implements IPInterfa
     private final IPRouter router;
     private final IPLayer ip;
 
+    private int intervalHello;
+    private int intervalLSP;
+
     //All ip of network
     private List<IPAddress> neighbours = new ArrayList<>();
     private Map<IPAddress, LSPMessage> LSDB = new HashMap<>();
     private Map<IPAddress, Integer> metric = new HashMap<>();
 
     /* Constructor */
-    public LSPRoutingProtocol(IPRouter router) {
+    public LSPRoutingProtocol(IPRouter router, int intervalHello, int intervalLSP) {
         super(router, PROTOCOL_LSP_NAME);
         this.router = router;
         this.ip = router.getIPLayer();
+        this.intervalHello = intervalHello;
+        this.intervalLSP = intervalLSP;
     }
 
     /* Override Methods */
