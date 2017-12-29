@@ -50,6 +50,7 @@ public class LSPRoutingProtocol extends AbstractApplication implements IPInterfa
             @Override
             protected void run() throws Exception {
                 sendHello();
+                //Thread.sleep(intervalHello*1000);
             }
         };
 
@@ -59,6 +60,7 @@ public class LSPRoutingProtocol extends AbstractApplication implements IPInterfa
             protected void run() throws Exception {
                 LSDB.put(getRouterID(), makeLSP(getRouterID(), (IPInterfaceAdapter) router.getInterfaceByName("lo")));
                 sendLSP(null, makeLSP(getRouterID(), null));
+                //Thread.sleep(intervalLSP*1000);
             }
         };
 
@@ -91,7 +93,7 @@ public class LSPRoutingProtocol extends AbstractApplication implements IPInterfa
         } else if (msg instanceof LSPMessage) {
             System.out.println(Constants._I + Constants.RECEIVE(router.toString(), getRouterID().toString(), src.toString(), "LSP", datagram.toString()));
             LSPMessage lspMsg = (LSPMessage) msg;
-            lspMsg.addInLSDB(((LSPMessage) msg).getOrigin(), ((LSPMessage) msg).getNumSeq());
+            lspMsg.addInLSDB(lspMsg.getOrigin(), metric.get(lspMsg.getOrigin()));
             this.LSDB.put(datagram.src, lspMsg);
             System.out.println(this.LSDB);
             sendLSP(src, lspMsg);
@@ -142,19 +144,10 @@ public class LSPRoutingProtocol extends AbstractApplication implements IPInterfa
                 lspMsg.setOif(iface);
                 Datagram d = new Datagram(iface.getAddress(), IPAddress.BROADCAST, IP_PROTO_LSP, 1, lspMsg);
                 System.out.println(Constants._I + Constants.SEND(router.toString(), getRouterID().toString(), iface.toString(), "LSP", d.toString()));
-                iface.send(d, d.dst);
+                iface.send(d, iface.getAddress());
             }
         }catch (Exception e){
             e.printStackTrace();
         }
     }
-
-    /*private class MyTimer extends AbstractTimer {
-        public MyTimer(AbstractScheduler scheduler, int interval) {
-            super(scheduler, interval, true);
-        }
-        public void run() throws Exception {
-            System.out.println("Current time: "+scheduler.getCurrentTime());
-        }
-    }*/
 }

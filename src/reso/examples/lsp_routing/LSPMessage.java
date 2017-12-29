@@ -36,8 +36,8 @@ public class LSPMessage implements Message {
         this.oif = oif;
     }
 
-    public void addInLSDB(IPAddress src, int numSeq){
-        this.lsp.put(src, numSeq);
+    public void addInLSDB(IPAddress src, int metric){
+        this.lsp.put(src, metric);
     }
 
     @Override
