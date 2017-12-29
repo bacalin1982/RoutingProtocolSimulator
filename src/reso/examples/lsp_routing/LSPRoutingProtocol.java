@@ -46,18 +46,24 @@ public class LSPRoutingProtocol extends AbstractApplication implements IPInterfa
             iface.addListener(this);
 
         //Launching neighbours discorvery
-        for (IPInterfaceAdapter iface : this.ip.getInterfaces()) {
-            if (iface instanceof IPLoopbackAdapter)
-                continue;
-            HelloMessage hm = new HelloMessage(getRouterID(), this.neighbours);
-            Datagram d = new Datagram(iface.getAddress(), IPAddress.BROADCAST, IP_PROTO_LSP, 1, hm);
-            System.out.println(Constants._I + Constants.SEND(getRouterID().toString(), iface.toString(), "HELLO", d.toString()));
-            iface.send(d, null);
-        }
+        AbstractTimer helloTimer = new AbstractTimer(scheduler, intervalHello, false) {
+            @Override
+            protected void run() throws Exception {
+                sendHello();
+            }
+        };
 
         //Send LSP message
-        sendLSP(null, makeLSP(getRouterID(), null));
+        AbstractTimer lspTimer = new AbstractTimer(scheduler, intervalLSP, false) {
+            @Override
+            protected void run() throws Exception {
+                LSDB.put(getRouterID(), makeLSP(getRouterID(), (IPInterfaceAdapter) router.getInterfaceByName("lo")));
+                sendLSP(null, makeLSP(getRouterID(), null));
+            }
+        };
 
+        helloTimer.start();
+        lspTimer.start();
     }
 
     @Override
@@ -76,31 +82,19 @@ public class LSPRoutingProtocol extends AbstractApplication implements IPInterfa
     public void receive(IPInterfaceAdapter src, Datagram datagram) throws Exception {
         Message msg = datagram.getPayload();
         if (msg instanceof HelloMessage) {
-            System.out.println(Constants._I + Constants.RECEIVE(getRouterID().toString(), src.toString(), "HELLO", datagram.toString()));
+            System.out.println(Constants._I + Constants.RECEIVE(router.toString(), getRouterID().toString(), src.toString(), "HELLO", datagram.toString()));
             HelloMessage hm = (HelloMessage) msg;
             if (!this.neighbours.contains(hm.getOrigin())) {
                 this.neighbours.add(hm.getOrigin());
                 this.metric.put(hm.getOrigin(), src.getMetric());
-
-                /*for(IPAddress key: metric.keySet()){
-                    System.out.println("metric "+key+"["+metric.get(key)+"]");
-                }*/
             }
         } else if (msg instanceof LSPMessage) {
-            System.out.println(Constants._I + Constants.RECEIVE(getRouterID().toString(), src.toString(), "LSP", datagram.toString()));
+            System.out.println(Constants._I + Constants.RECEIVE(router.toString(), getRouterID().toString(), src.toString(), "LSP", datagram.toString()));
             LSPMessage lspMsg = (LSPMessage) msg;
             lspMsg.addInLSDB(((LSPMessage) msg).getOrigin(), ((LSPMessage) msg).getNumSeq());
             this.LSDB.put(datagram.src, lspMsg);
             System.out.println(this.LSDB);
             sendLSP(src, lspMsg);
-           /* for(IPInterfaceAdapter iface: ip.getInterfaces()) {
-                if (iface instanceof IPLoopbackAdapter)
-                    continue;
-                LSPMessage newLspMsg = makeLSP(getRouterID(), src);
-                Datagram d = new Datagram(iface.getAddress(), IPAddress.BROADCAST, IP_PROTO_LSP, 1, newLspMsg);
-                System.out.println(Constants._I+Constants.SEND(getRouterID().toString(), iface.toString(), "LSP", d.toString()));
-                iface.send(d, null);
-            }*/
         }
     }
 
@@ -117,6 +111,21 @@ public class LSPRoutingProtocol extends AbstractApplication implements IPInterfa
         return routerID;
     }
 
+    private void sendHello(){
+        try{
+            for (IPInterfaceAdapter iface : this.ip.getInterfaces()) {
+                if (iface instanceof IPLoopbackAdapter)
+                    continue;
+                HelloMessage hm = new HelloMessage(getRouterID(), this.neighbours);
+                Datagram d = new Datagram(iface.getAddress(), IPAddress.BROADCAST, IP_PROTO_LSP, 1, hm);
+                System.out.println(Constants._I + Constants.SEND(router.toString(), getRouterID().toString(), iface.toString(), "HELLO", d.toString()));
+                iface.send(d, null);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
     private LSPMessage makeLSP(IPAddress origin, IPInterfaceAdapter oif) {
         Map<IPAddress, Integer> lsp = new HashMap<>();
         for (IPAddress key : metric.keySet()) {
@@ -126,13 +135,26 @@ public class LSPRoutingProtocol extends AbstractApplication implements IPInterfa
     }
 
     private void sendLSP(IPInterfaceAdapter src, LSPMessage lspMsg) throws Exception {
-        for (IPInterfaceAdapter iface : ip.getInterfaces()) {
-            if (iface instanceof IPLoopbackAdapter || iface.equals(src))
-                continue;
-            lspMsg.setOif(iface);
-            Datagram d = new Datagram(iface.getAddress(), IPAddress.BROADCAST, IP_PROTO_LSP, 1, lspMsg);
-            System.out.println(Constants._I + Constants.SEND(getRouterID().toString(), iface.toString(), "LSP", d.toString()));
-            iface.send(d, null);
+        try {
+            for (IPInterfaceAdapter iface : ip.getInterfaces()) {
+                if (iface instanceof IPLoopbackAdapter || iface.equals(src))
+                    continue;
+                lspMsg.setOif(iface);
+                Datagram d = new Datagram(iface.getAddress(), IPAddress.BROADCAST, IP_PROTO_LSP, 1, lspMsg);
+                System.out.println(Constants._I + Constants.SEND(router.toString(), getRouterID().toString(), iface.toString(), "LSP", d.toString()));
+                iface.send(d, d.dst);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
+
+    /*private class MyTimer extends AbstractTimer {
+        public MyTimer(AbstractScheduler scheduler, int interval) {
+            super(scheduler, interval, true);
+        }
+        public void run() throws Exception {
+            System.out.println("Current time: "+scheduler.getCurrentTime());
+        }
+    }*/
 }
