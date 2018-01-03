@@ -13,7 +13,7 @@ public class Graph {
     public Graph(List<Link> links){
         this.links = links;
         this.points = this.computePoints(links);
-        //System.out.println(points);
+        System.out.println(points);
     }
 
     private List<Point> computePoints(List<Link> links) {
