@@ -1,6 +1,5 @@
 package reso.examples.lsp_routing;
 
-import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
 import reso.ip.IPAddress;
 
 import java.util.ArrayList;
