@@ -5,6 +5,7 @@ import reso.common.Node;
 import reso.ip.IPRouter;
 import reso.scheduler.AbstractScheduler;
 import reso.scheduler.Scheduler;
+import reso.utilities.FIBDumper;
 import reso.utilities.NetworkBuilder;
 
 public class RoutingDemo {
@@ -16,8 +17,8 @@ public class RoutingDemo {
         String filename= RoutingDemo.class.getClassLoader().getResource(TOPO_FILE).getFile();
 
         AbstractScheduler scheduler= new Scheduler();
-        int intervalHello = 5;
-        int intervalLSP = 10;
+        int intervalHello = 1;
+        int intervalLSP = 1;
         try{
             System.out.println(Constants._T);
             Network network= NetworkBuilder.loadTopology(filename, scheduler);

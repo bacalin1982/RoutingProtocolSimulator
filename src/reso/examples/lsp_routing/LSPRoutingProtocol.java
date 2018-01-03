@@ -19,6 +19,7 @@ public class LSPRoutingProtocol extends AbstractApplication implements IPInterfa
 
     private int intervalHello;
     private int intervalLSP;
+    private int intervalDijkstra;
     private AbstractScheduler scheduler;
 
     //All ip of network
@@ -33,6 +34,7 @@ public class LSPRoutingProtocol extends AbstractApplication implements IPInterfa
         this.ip = router.getIPLayer();
         this.intervalHello = intervalHello;
         this.intervalLSP = intervalLSP;
+        this.intervalDijkstra = 5;
         this.scheduler = scheduler;
     }
 
@@ -50,22 +52,32 @@ public class LSPRoutingProtocol extends AbstractApplication implements IPInterfa
             @Override
             protected void run() throws Exception {
                 sendHello();
-                //Thread.sleep(intervalHello*1000);
+                Thread.sleep(intervalHello*300);
             }
         };
 
         //Send LSP message
-        AbstractTimer lspTimer = new AbstractTimer(scheduler, intervalLSP, false) {
+        AbstractTimer lspTimer = new AbstractTimer(scheduler, intervalLSP, true) {
             @Override
             protected void run() throws Exception {
                 LSDB.put(getRouterID(), makeLSP(getRouterID(), (IPInterfaceAdapter) router.getInterfaceByName("lo")));
                 sendLSP(null, makeLSP(getRouterID(), null));
-                //Thread.sleep(intervalLSP*1000);
+                Thread.sleep(intervalLSP*300);
+            }
+        };
+
+
+        AbstractTimer dijkstraTimer = new AbstractTimer(scheduler, this.intervalDijkstra, true) {
+            @Override
+            protected void run() throws Exception {
+                shortestTravelComputation();
+                Thread.sleep(intervalDijkstra*300);
             }
         };
 
         helloTimer.start();
         lspTimer.start();
+        dijkstraTimer.start();
     }
 
     @Override
@@ -95,7 +107,6 @@ public class LSPRoutingProtocol extends AbstractApplication implements IPInterfa
             LSPMessage lspMsg = (LSPMessage) msg;
             lspMsg.addInLSDB(lspMsg.getOrigin(), metric.get(lspMsg.getOrigin()));
             this.LSDB.put(datagram.src, lspMsg);
-            System.out.println(this.LSDB);
             sendLSP(src, lspMsg);
         }
     }
@@ -144,10 +155,30 @@ public class LSPRoutingProtocol extends AbstractApplication implements IPInterfa
                 lspMsg.setOif(iface);
                 Datagram d = new Datagram(iface.getAddress(), IPAddress.BROADCAST, IP_PROTO_LSP, 1, lspMsg);
                 System.out.println(Constants._I + Constants.SEND(router.toString(), getRouterID().toString(), iface.toString(), "LSP", d.toString()));
-                iface.send(d, iface.getAddress());
+                iface.send(d, null);
             }
         }catch (Exception e){
             e.printStackTrace();
         }
+    }
+
+    private Map<IPAddress, Integer> shortestTravelComputation(){
+        Map<IPAddress, Integer> bestRoute = new HashMap<>();
+        Point[] points;
+        int nbPoints;
+        List<Link> links = new ArrayList<Link>();
+        int nbLinks;
+
+        for(IPAddress ip: this.metric.keySet()){
+            links.add(new Link(getRouterID(), ip, this.metric.get(ip)));
+            //System.out.println(getRouterID()+" to "+ip.toString()+" cost "+this.metric.get(ip));
+        }
+        if(! links.isEmpty()){
+            Graph g = new Graph(links);
+        }
+
+
+
+        return bestRoute;
     }
 }
