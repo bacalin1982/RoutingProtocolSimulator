@@ -13,7 +13,7 @@ public class Constants {
     public static final String _S = "       : ";
 
     /* Strings */
-    public static String SEND(String rn, String r, String i, String t, String d){ return rn+ " "+ r + " on " + i + " SEND\t[" + t + "]\t->\t" + d;
-    }
+    public static String SEND(String rn, String r, String i, String t, String d){ return rn+ " "+ r + " on " + i + " SEND\t[" + t + "]\t->\t" + d; }
     public static String RECEIVE(String rn, String r, String i, String t, String d){ return rn+ " "+ r + " on " + i + " RCVE\t[" + t + "]\t<-\t" + d; }
+    public static String LSDB(String rn){ return "LSDB on "+ rn;}
 }

@@ -48,7 +48,7 @@ public class LSPRoutingProtocol extends AbstractApplication implements IPInterfa
             iface.addListener(this);
 
         //Launching neighbours discorvery
-        AbstractTimer helloTimer = new AbstractTimer(scheduler, intervalHello, false) {
+        AbstractTimer helloTimer = new AbstractTimer(scheduler, intervalHello, true) {
             @Override
             protected void run() throws Exception {
                 sendHello();
@@ -75,9 +75,22 @@ public class LSPRoutingProtocol extends AbstractApplication implements IPInterfa
             }
         };
 
+        AbstractTimer debugTimer = new AbstractTimer(scheduler, 10, true) {
+            @Override
+            protected void run() throws Exception {
+                System.out.println(Constants._I + Constants.LSDB(router.toString()));
+                for(IPAddress src: LSDB.keySet()){
+                    System.out.println("\t-> src["+src+"] "+LSDB.get(src).toString());
+                }
+                Thread.sleep(10*300);
+            }
+        };
+
         helloTimer.start();
         lspTimer.start();
+        debugTimer.start();
         dijkstraTimer.start();
+
     }
 
     @Override
@@ -105,7 +118,7 @@ public class LSPRoutingProtocol extends AbstractApplication implements IPInterfa
         } else if (msg instanceof LSPMessage) {
             System.out.println(Constants._I + Constants.RECEIVE(router.toString(), getRouterID().toString(), src.toString(), "LSP", datagram.toString()));
             LSPMessage lspMsg = (LSPMessage) msg;
-            lspMsg.addInLSDB(lspMsg.getOrigin(), metric.get(lspMsg.getOrigin()));
+            lspMsg.addInLSDB(src.getAddress(), metric.get(lspMsg.getOrigin()));
             this.LSDB.put(datagram.src, lspMsg);
             sendLSP(src, lspMsg);
         }

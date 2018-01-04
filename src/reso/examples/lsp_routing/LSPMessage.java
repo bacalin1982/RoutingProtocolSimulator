@@ -9,7 +9,7 @@ import java.util.Map;
 
 public class LSPMessage implements Message {
     private final IPAddress origin;
-    private final int numSeq;
+    private int numSeq;
     private Map<IPAddress, Integer> lsp = new HashMap<>();
     private IPInterfaceAdapter oif;
 
@@ -26,6 +26,10 @@ public class LSPMessage implements Message {
 
     public int getNumSeq() {
         return numSeq;
+    }
+
+    public void setNumSeq(int numSeq) {
+        this.numSeq = numSeq;
     }
 
     public IPInterfaceAdapter getOif() {
