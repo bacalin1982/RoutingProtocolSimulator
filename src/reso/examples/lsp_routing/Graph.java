@@ -86,7 +86,7 @@ public class Graph {
         return storedPointIndex;
     }
 
-    public void printResult(){
+    public void getResult(){
         String output = "";
         for (Point p : this.points){
             output += "\nThe shortest distance from IP " + this.points.get(2).getId().toString() + " to IP " + p.getId().toString() + " is " + p.getcostTotalFromSrc() + " with " + p.getListOfCostsFromSrc();
