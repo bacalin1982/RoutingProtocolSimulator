@@ -95,7 +95,7 @@ public class Graph {
         return storedPointIndex;
     }
 
-    public void getResult(){
+    public List<List<Point>> getResult(){
         String output = "";
         int i = 0;
         for (List<Point> list: this.result){
@@ -105,6 +105,8 @@ public class Graph {
             i++;
         }
         System.out.println(output);
+
+        return this.result;
     }
 
     private int getIndexOfPointWithIp(IPAddress ip){
@@ -114,21 +116,5 @@ public class Graph {
                 index = this.points.indexOf(p);
         }
         return index;
-    }
-
-    public List<Link> getLinks() {
-        return links;
-    }
-
-    public void setLinks(List<Link> links) {
-        this.links = links;
-    }
-
-    public List<Point> getPoints() {
-        return points;
-    }
-
-    public void setPoints(List<Point> points) {
-        this.points = points;
     }
 }
