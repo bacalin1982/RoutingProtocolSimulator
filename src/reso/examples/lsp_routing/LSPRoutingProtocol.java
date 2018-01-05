@@ -246,7 +246,15 @@ public class LSPRoutingProtocol extends AbstractApplication implements IPInterfa
         if(! links.isEmpty()){
             Graph g = new Graph(links);
             g.computeShortestDistance();
-            g.getResult();
+            List<List<Point>> result = new ArrayList<>();
+            result = g.getResult(true);
+            if (result != null){
+                //Je pense qu'il faut parser le result comme dans la fonction getResult mais en informant la FIB ici ...
+                //J'suis HS je vais dormir un peu :)
+            }
+            else{
+                System.out.println(Constants._E+Constants.DIJK_ERR);
+            }
         }
 
         return bestRoute;

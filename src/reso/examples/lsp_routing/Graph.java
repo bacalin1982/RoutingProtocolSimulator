@@ -43,6 +43,7 @@ public class Graph {
         return points;
     }
 
+    //Dijkstra Algorithm, You've no idea how much time it costs ...
     public void computeShortestDistance(){
         for (int i = 0; i < this.points.size(); i++){
             this.points.get(i).setcostTotalFromSrc(0);
@@ -95,17 +96,18 @@ public class Graph {
         return storedPointIndex;
     }
 
-    public List<List<Point>> getResult(){
-        String output = "";
-        int i = 0;
-        for (List<Point> list: this.result){
-            for (Point p : list){
-                output += "\nThe shortest distance from IP " + this.points.get(i).getId().toString() + " to IP " + p.getId().toString() + " is " + p.getcostTotalFromSrc() + " with " + p.getListOfCostsFromSrc();
+    public List<List<Point>> getResult(boolean debug){
+        if (debug) {
+            String output = "";
+            int i = 0;
+            for (List<Point> list : this.result) {
+                for (Point p : list) {
+                    output += Constants._I + "The shortest distance from IP " + this.points.get(i).getId().toString() + " to IP " + p.getId().toString() + " is " + p.getcostTotalFromSrc() + " with " + p.getListOfCostsFromSrc() + "\n";
+                }
+                i++;
             }
-            i++;
+            System.out.println(output);
         }
-        System.out.println(output);
-
         return this.result;
     }
 
