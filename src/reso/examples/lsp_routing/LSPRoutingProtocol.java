@@ -175,6 +175,8 @@ public class LSPRoutingProtocol extends AbstractApplication implements IPInterfa
         }
         if(! links.isEmpty()){
             Graph g = new Graph(links);
+            g.computeShortestDistance();
+            g.printResult();
         }
 
 

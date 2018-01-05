@@ -12,7 +12,7 @@ public class Graph {
     public Graph(List<Link> links){
         this.links = links;
         this.points = this.computePoints(links);
-        System.out.println(points);
+        //System.out.println(points);
     }
 
     private List<Point> computePoints(List<Link> links) {
@@ -32,7 +32,6 @@ public class Graph {
 
         for (Point p : points) {
             for (Link l : links) {
-                //Maybe this line shall be update, we shall invert Dest and Src in case of l.getDest().toString().equals(p.getId().toString())
                 if(l.getSrc().toString().equals(p.getId().toString()))
                     p.addLink(l);
                 else if(l.getDest().toString().equals(p.getId().toString())){
@@ -41,6 +40,62 @@ public class Graph {
             }
         }
         return points;
+    }
+
+    public void computeShortestDistance(){
+        this.points.get(0).setcostTotalFromSrc(0);
+        int nextPoint = 0;
+
+        for(Point p: this.points){
+            ArrayList<Link> currentPointLinks = this.points.get(nextPoint).getLinks();
+            int joinedLink = 0;
+            for(Link l: currentPointLinks){
+                IPAddress neighbourIndex = currentPointLinks.get(joinedLink).getNeighbourIp(this.points.get(nextPoint).getId());
+                if (! this.points.get(getIndexOfPointWithIp(neighbourIndex)).isVisited()){
+                    int ftry = this.points.get(nextPoint).getcostTotalFromSrc() + currentPointLinks.get(joinedLink).getCost();
+                    if (ftry < points.get(getIndexOfPointWithIp(neighbourIndex)).getcostTotalFromSrc()){
+                        points.get(getIndexOfPointWithIp(neighbourIndex)).setcostTotalFromSrc(ftry);
+                    }
+                }
+                joinedLink ++;
+            }
+            points.get(nextPoint).setVisited(true);
+            nextPoint = getPointShortestDistance();
+        }
+    }
+
+    private int getPointShortestDistance(){
+        int storedPointIndex = 0;
+        int storedDist = Integer.MAX_VALUE;
+
+        for (Point p : this.points){
+            int currentDist = p.getcostTotalFromSrc();
+            if (!p.isVisited() && currentDist < storedDist){
+                storedDist = currentDist;
+                storedPointIndex = getIndexOfPointWithIp(p.getId());
+            }
+        }
+
+        return storedPointIndex;
+    }
+
+    public void printResult(){
+        String output = "N of Points = " + this.points.size();
+        output += "\nNumber of Links = " + this.links.size();
+        for (Point p : this.points){
+            output += "\nThe shortest distance from node " + this.points.get(0).getId().toString() + " to node " + p.getId().toString() + " is " + p.getcostTotalFromSrc();
+        }
+
+        System.out.println(output);
+    }
+
+    private int getIndexOfPointWithIp(IPAddress ip){
+        int index = -1;
+        for(Point p: this.points){
+            if (p.getId() == ip)
+                index = this.points.indexOf(p);
+        }
+        return index;
     }
 
     public List<Link> getLinks() {
@@ -59,4 +114,3 @@ public class Graph {
         this.points = points;
     }
 }
-

@@ -37,6 +37,14 @@ public class Link {
         this.cost = cost;
     }
 
+    public IPAddress getNeighbourIp(IPAddress nodeIp){
+        if(this.src == nodeIp){
+            return this.dest;
+        }else{
+            return this.src;
+        }
+    }
+
     @Override
     public String toString() {
         return "Link from " + this.src + " to " + this.dest + " cost " + this.cost;
