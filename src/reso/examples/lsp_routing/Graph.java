@@ -104,7 +104,6 @@ public class Graph {
             }
             i++;
         }
-
         System.out.println(output);
     }
 
