@@ -1,6 +1,5 @@
 package reso.examples.lsp_routing;
 
-import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
 import reso.ip.IPAddress;
 
 import java.util.ArrayList;
@@ -13,7 +12,6 @@ public class Graph {
     public Graph(List<Link> links){
         this.links = links;
         this.points = this.computePoints(links);
-        //System.out.println(points);
     }
 
     private List<Point> computePoints(List<Link> links) {
@@ -44,8 +42,8 @@ public class Graph {
     }
 
     public void computeShortestDistance(){
-        this.points.get(0).setcostTotalFromSrc(0);
-        int nextPoint = 0;
+        this.points.get(2).setcostTotalFromSrc(0);
+        int nextPoint = 2;
 
         for(Point p: this.points){
             ArrayList<Link> currentPointLinks = this.points.get(nextPoint).getLinks();
@@ -53,11 +51,12 @@ public class Graph {
             for(Link l: currentPointLinks){
                 IPAddress neighbourIP = currentPointLinks.get(joinedLink).getNeighbourIp(this.points.get(nextPoint).getId());
                 if (! this.points.get(getIndexOfPointWithIp(neighbourIP)).isVisited()){
-                    System.out.println("Not visited yet --->" + this.points.get(getIndexOfPointWithIp(neighbourIP)).getId());
+                    //System.out.println("Not visited yet --->" + this.points.get(getIndexOfPointWithIp(neighbourIP)).getId());
                     int ftry = this.points.get(nextPoint).getcostTotalFromSrc() + currentPointLinks.get(joinedLink).getCost();
-                    System.out.println("TRY = "+ftry);
+                    //System.out.println("TRY = "+ftry);
                     if (ftry < points.get(getIndexOfPointWithIp(neighbourIP)).getcostTotalFromSrc()){
-                        System.out.println("TRY "+ ftry + " is minus than TRY " + points.get(getIndexOfPointWithIp(neighbourIP)).getcostTotalFromSrc() + " from " + points.get(getIndexOfPointWithIp(neighbourIP)).getId());
+                        //System.out.println("TRY "+ ftry + " is minus than TRY " + points.get(getIndexOfPointWithIp(neighbourIP)).getcostTotalFromSrc() + " from " + points.get(getIndexOfPointWithIp(neighbourIP)).getId());
+                        points.get(getIndexOfPointWithIp(neighbourIP)).resetListOfCostsFromSrc();
                         for (Link li: points.get(nextPoint).getListOfCostsFromSrc()){
                             points.get(getIndexOfPointWithIp(neighbourIP)).addListOfCostsFromSrc(li);
                         }
@@ -88,10 +87,9 @@ public class Graph {
     }
 
     public void printResult(){
-        String output = "N of Points = " + this.points.size();
-        output += "\nN of Links = " + this.links.size();
+        String output = "";
         for (Point p : this.points){
-            output += "\nThe shortest distance from IP " + this.points.get(0).getId().toString() + " to IP " + p.getId().toString() + " is " + p.getcostTotalFromSrc() + " with " + p.getListOfCostsFromSrc();
+            output += "\nThe shortest distance from IP " + this.points.get(2).getId().toString() + " to IP " + p.getId().toString() + " is " + p.getcostTotalFromSrc() + " with " + p.getListOfCostsFromSrc();
         }
 
         System.out.println(output);

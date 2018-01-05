@@ -59,6 +59,10 @@ public class Point {
         return listOfCostsFromSrc;
     }
 
+    public void resetListOfCostsFromSrc() {
+        this.listOfCostsFromSrc = new ArrayList<Link>();
+    }
+
     public void addListOfCostsFromSrc(Link l) {
         this.listOfCostsFromSrc.add(l);
     }
