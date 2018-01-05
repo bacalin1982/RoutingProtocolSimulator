@@ -8,10 +8,12 @@ import java.util.List;
 public class Graph {
     private List<Link> links;
     private List<Point> points;
+    private List<List<Point>> result;
 
     public Graph(List<Link> links){
         this.links = links;
         this.points = this.computePoints(links);
+        this.result = new ArrayList<>();
     }
 
     private List<Point> computePoints(List<Link> links) {
@@ -42,32 +44,39 @@ public class Graph {
     }
 
     public void computeShortestDistance(){
-        this.points.get(2).setcostTotalFromSrc(0);
-        int nextPoint = 2;
+        for (int i = 0; i < this.points.size(); i++){
+            this.points.get(i).setcostTotalFromSrc(0);
+            this.points.get(i).isSource(true);
+            int nextPoint = i;
 
-        for(Point p: this.points){
-            ArrayList<Link> currentPointLinks = this.points.get(nextPoint).getLinks();
-            int joinedLink = 0;
-            for(Link l: currentPointLinks){
-                IPAddress neighbourIP = currentPointLinks.get(joinedLink).getNeighbourIp(this.points.get(nextPoint).getId());
-                if (! this.points.get(getIndexOfPointWithIp(neighbourIP)).isVisited()){
-                    //System.out.println("Not visited yet --->" + this.points.get(getIndexOfPointWithIp(neighbourIP)).getId());
-                    int ftry = this.points.get(nextPoint).getcostTotalFromSrc() + currentPointLinks.get(joinedLink).getCost();
-                    //System.out.println("TRY = "+ftry);
-                    if (currentPointLinks.get(joinedLink).getCost() != Integer.MAX_VALUE && ftry < points.get(getIndexOfPointWithIp(neighbourIP)).getcostTotalFromSrc()){
-                        //System.out.println("TRY "+ ftry + " is minus than TRY " + points.get(getIndexOfPointWithIp(neighbourIP)).getcostTotalFromSrc() + " from " + points.get(getIndexOfPointWithIp(neighbourIP)).getId());
-                        points.get(getIndexOfPointWithIp(neighbourIP)).resetListOfCostsFromSrc();
-                        for (Link li: points.get(nextPoint).getListOfCostsFromSrc()){
-                            points.get(getIndexOfPointWithIp(neighbourIP)).addListOfCostsFromSrc(li);
+            for(Point p: this.points){
+                ArrayList<Link> currentPointLinks = this.points.get(nextPoint).getLinks();
+                int joinedLink = 0;
+                for(Link l: currentPointLinks){
+                    IPAddress neighbourIP = currentPointLinks.get(joinedLink).getNeighbourIp(this.points.get(nextPoint).getId());
+                    if (! this.points.get(getIndexOfPointWithIp(neighbourIP)).isVisited()){
+                        //System.out.println("Not visited yet --->" + this.points.get(getIndexOfPointWithIp(neighbourIP)).getId());
+                        int ftry = this.points.get(nextPoint).getcostTotalFromSrc() + currentPointLinks.get(joinedLink).getCost();
+                        //System.out.println("TRY = "+ftry);
+                        if (currentPointLinks.get(joinedLink).getCost() != Integer.MAX_VALUE && ftry < points.get(getIndexOfPointWithIp(neighbourIP)).getcostTotalFromSrc()){
+                            //System.out.println("TRY "+ ftry + " is minus than TRY " + points.get(getIndexOfPointWithIp(neighbourIP)).getcostTotalFromSrc() + " from " + points.get(getIndexOfPointWithIp(neighbourIP)).getId());
+                            points.get(getIndexOfPointWithIp(neighbourIP)).resetListOfCostsFromSrc();
+                            for (Link li: points.get(nextPoint).getListOfCostsFromSrc()){
+                                points.get(getIndexOfPointWithIp(neighbourIP)).addListOfCostsFromSrc(li);
+                            }
+                            points.get(getIndexOfPointWithIp(neighbourIP)).addListOfCostsFromSrc(l);
+                            points.get(getIndexOfPointWithIp(neighbourIP)).setcostTotalFromSrc(ftry);
                         }
-                        points.get(getIndexOfPointWithIp(neighbourIP)).addListOfCostsFromSrc(l);
-                        points.get(getIndexOfPointWithIp(neighbourIP)).setcostTotalFromSrc(ftry);
                     }
+                    joinedLink ++;
                 }
-                joinedLink ++;
+                points.get(nextPoint).setVisited(true);
+                nextPoint = getPointShortestDistance();
             }
-            points.get(nextPoint).setVisited(true);
-            nextPoint = getPointShortestDistance();
+            //Saving points done from one source
+            this.result.add(this.points);
+            //Reset all points distance from source
+            this.points = computePoints(this.links);
         }
     }
 
@@ -88,8 +97,12 @@ public class Graph {
 
     public void getResult(){
         String output = "";
-        for (Point p : this.points){
-            output += "\nThe shortest distance from IP " + this.points.get(2).getId().toString() + " to IP " + p.getId().toString() + " is " + p.getcostTotalFromSrc() + " with " + p.getListOfCostsFromSrc();
+        int i = 0;
+        for (List<Point> list: this.result){
+            for (Point p : list){
+                output += "\nThe shortest distance from IP " + this.points.get(i).getId().toString() + " to IP " + p.getId().toString() + " is " + p.getcostTotalFromSrc() + " with " + p.getListOfCostsFromSrc();
+            }
+            i++;
         }
 
         System.out.println(output);

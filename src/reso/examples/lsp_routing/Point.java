@@ -10,6 +10,7 @@ public class Point {
     private int costTotalFromSrc = Integer.MAX_VALUE;
     private ArrayList<Link> listOfCostsFromSrc = new ArrayList<>();
     private boolean visited;
+    private boolean isSource;
     private ArrayList<Link> links = new ArrayList<>();
 
     public Point(IPAddress id, int costFromSrc, boolean visited, ArrayList<Link> links) {
@@ -17,6 +18,7 @@ public class Point {
         this.costTotalFromSrc = costFromSrc;
         this.visited = visited;
         this.links = links;
+        this.isSource = false;
     }
 
     public IPAddress getId() {
@@ -41,6 +43,14 @@ public class Point {
 
     public void setVisited(boolean visited) {
         this.visited = visited;
+    }
+
+    public boolean isSource() {
+        return isSource;
+    }
+
+    public void isSource(boolean source) {
+        isSource = source;
     }
 
     public ArrayList<Link> getLinks() {
