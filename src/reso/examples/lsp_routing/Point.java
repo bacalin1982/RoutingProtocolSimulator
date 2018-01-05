@@ -3,15 +3,14 @@ package reso.examples.lsp_routing;
 import reso.ip.IPAddress;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 public class Point {
     private IPAddress id;
     private int costTotalFromSrc = Integer.MAX_VALUE;
-    private Map<IPAddress, Integer> listOfCostsFromSrc = new HashMap<>();
+    private ArrayList<Link> listOfCostsFromSrc = new ArrayList<>();
     private boolean visited;
-    private ArrayList<Link> links = new ArrayList<Link>();
+    private ArrayList<Link> links = new ArrayList<>();
 
     public Point(IPAddress id, int costFromSrc, boolean visited, ArrayList<Link> links) {
         this.id = id;
@@ -56,12 +55,16 @@ public class Point {
         this.links.add(l);
     }
 
-    public Map<IPAddress, Integer> getListOfCostsFromSrc() {
+    public List<Link> getListOfCostsFromSrc() {
         return listOfCostsFromSrc;
     }
 
-    public void addListOfCostsFromSrc(IPAddress ip, Integer cost) {
-        this.listOfCostsFromSrc.put(ip, cost);
+    public void addListOfCostsFromSrc(Link l) {
+        this.listOfCostsFromSrc.add(l);
+    }
+
+    public void delListOfCostsFromSrc(Link l) {
+        this.listOfCostsFromSrc.remove(l);
     }
 
     @Override

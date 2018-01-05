@@ -1,5 +1,6 @@
 package reso.examples.lsp_routing;
 
+import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
 import reso.ip.IPAddress;
 
 import java.util.ArrayList;
@@ -52,8 +53,15 @@ public class Graph {
             for(Link l: currentPointLinks){
                 IPAddress neighbourIP = currentPointLinks.get(joinedLink).getNeighbourIp(this.points.get(nextPoint).getId());
                 if (! this.points.get(getIndexOfPointWithIp(neighbourIP)).isVisited()){
+                    System.out.println("Not visited yet --->" + this.points.get(getIndexOfPointWithIp(neighbourIP)).getId());
                     int ftry = this.points.get(nextPoint).getcostTotalFromSrc() + currentPointLinks.get(joinedLink).getCost();
+                    System.out.println("TRY = "+ftry);
                     if (ftry < points.get(getIndexOfPointWithIp(neighbourIP)).getcostTotalFromSrc()){
+                        System.out.println("TRY "+ ftry + " is minus than TRY " + points.get(getIndexOfPointWithIp(neighbourIP)).getcostTotalFromSrc() + " from " + points.get(getIndexOfPointWithIp(neighbourIP)).getId());
+                        for (Link li: points.get(nextPoint).getListOfCostsFromSrc()){
+                            points.get(getIndexOfPointWithIp(neighbourIP)).addListOfCostsFromSrc(li);
+                        }
+                        points.get(getIndexOfPointWithIp(neighbourIP)).addListOfCostsFromSrc(l);
                         points.get(getIndexOfPointWithIp(neighbourIP)).setcostTotalFromSrc(ftry);
                     }
                 }
