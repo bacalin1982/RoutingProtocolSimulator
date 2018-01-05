@@ -2,30 +2,36 @@ package reso.examples.lsp_routing;
 
 import reso.common.Message;
 import reso.ip.IPAddress;
+import reso.ip.IPInterfaceAdapter;
+import reso.ip.IPRouter;
+
 import java.util.List;
 
 public class HelloMessage implements Message {
 
-    private final IPAddress origin;
-    private List<IPAddress> neighbours;
+    private final IPRouter              router;
+    private final IPAddress             routerIp;
+    private final IPInterfaceAdapter    routerEth;
 
-    public HelloMessage(IPAddress origin, List<IPAddress> neighbours) {
-        this.origin = origin;
-        this.neighbours = neighbours;
+    public HelloMessage(IPRouter router, IPAddress routerIp, IPInterfaceAdapter routerEth) {
+        this.router     = router;
+        this.routerIp   = routerIp;
+        this.routerEth  = routerEth;
     }
 
-    public IPAddress getOrigin() {
-        return origin;
+    public IPRouter getRouter() {
+        return router;
     }
 
-    public List<IPAddress> getNeighbours() {
-        return neighbours;
+    public IPAddress getRouterIp() {
+        return routerIp;
+    }
+
+    public IPInterfaceAdapter getRouterEth() {
+        return routerEth;
     }
 
     public String toString() {
-            String ns = "";
-            for (IPAddress n : neighbours)
-                ns += n.toString() + "; ";
-            return "HELLO[FROM=" + origin + " ; NEIGHBOURS=[" + ns + "]";
-        }
+        return "HELLO[R="+getRouter()+"; FROM="+getRouterIp()+"; ETH="+getRouterEth()+"]";
+    }
 }
