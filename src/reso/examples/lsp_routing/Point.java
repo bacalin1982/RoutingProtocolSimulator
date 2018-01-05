@@ -56,6 +56,14 @@ public class Point {
         this.links.add(l);
     }
 
+    public Map<IPAddress, Integer> getListOfCostsFromSrc() {
+        return listOfCostsFromSrc;
+    }
+
+    public void addListOfCostsFromSrc(IPAddress ip, Integer cost) {
+        this.listOfCostsFromSrc.put(ip, cost);
+    }
+
     @Override
     public String toString() {
         return "Point " + this.id + " with links [" + links + "]";

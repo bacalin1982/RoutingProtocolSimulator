@@ -50,11 +50,11 @@ public class Graph {
             ArrayList<Link> currentPointLinks = this.points.get(nextPoint).getLinks();
             int joinedLink = 0;
             for(Link l: currentPointLinks){
-                IPAddress neighbourIndex = currentPointLinks.get(joinedLink).getNeighbourIp(this.points.get(nextPoint).getId());
-                if (! this.points.get(getIndexOfPointWithIp(neighbourIndex)).isVisited()){
+                IPAddress neighbourIP = currentPointLinks.get(joinedLink).getNeighbourIp(this.points.get(nextPoint).getId());
+                if (! this.points.get(getIndexOfPointWithIp(neighbourIP)).isVisited()){
                     int ftry = this.points.get(nextPoint).getcostTotalFromSrc() + currentPointLinks.get(joinedLink).getCost();
-                    if (ftry < points.get(getIndexOfPointWithIp(neighbourIndex)).getcostTotalFromSrc()){
-                        points.get(getIndexOfPointWithIp(neighbourIndex)).setcostTotalFromSrc(ftry);
+                    if (ftry < points.get(getIndexOfPointWithIp(neighbourIP)).getcostTotalFromSrc()){
+                        points.get(getIndexOfPointWithIp(neighbourIP)).setcostTotalFromSrc(ftry);
                     }
                 }
                 joinedLink ++;
@@ -81,9 +81,9 @@ public class Graph {
 
     public void printResult(){
         String output = "N of Points = " + this.points.size();
-        output += "\nNumber of Links = " + this.links.size();
+        output += "\nN of Links = " + this.links.size();
         for (Point p : this.points){
-            output += "\nThe shortest distance from node " + this.points.get(0).getId().toString() + " to node " + p.getId().toString() + " is " + p.getcostTotalFromSrc();
+            output += "\nThe shortest distance from IP " + this.points.get(0).getId().toString() + " to IP " + p.getId().toString() + " is " + p.getcostTotalFromSrc() + " with " + p.getListOfCostsFromSrc();
         }
 
         System.out.println(output);
