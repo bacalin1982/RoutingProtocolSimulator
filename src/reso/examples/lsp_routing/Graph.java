@@ -54,7 +54,7 @@ public class Graph {
                     //System.out.println("Not visited yet --->" + this.points.get(getIndexOfPointWithIp(neighbourIP)).getId());
                     int ftry = this.points.get(nextPoint).getcostTotalFromSrc() + currentPointLinks.get(joinedLink).getCost();
                     //System.out.println("TRY = "+ftry);
-                    if (ftry < points.get(getIndexOfPointWithIp(neighbourIP)).getcostTotalFromSrc()){
+                    if (currentPointLinks.get(joinedLink).getCost() != Integer.MAX_VALUE && ftry < points.get(getIndexOfPointWithIp(neighbourIP)).getcostTotalFromSrc()){
                         //System.out.println("TRY "+ ftry + " is minus than TRY " + points.get(getIndexOfPointWithIp(neighbourIP)).getcostTotalFromSrc() + " from " + points.get(getIndexOfPointWithIp(neighbourIP)).getId());
                         points.get(getIndexOfPointWithIp(neighbourIP)).resetListOfCostsFromSrc();
                         for (Link li: points.get(nextPoint).getListOfCostsFromSrc()){
