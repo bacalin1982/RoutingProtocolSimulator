@@ -115,7 +115,9 @@ public class LSPRoutingProtocol extends AbstractApplication implements IPInterfa
             @Override
             protected void run() throws Exception {
                 // Display forwarding table for each node
+                System.out.println(Constants._I + Constants.FIB(router.toString(), "STARTED"));
                 FIBDumper.dumpForAllRouters(router.getNetwork());
+                System.out.println(Constants._I + Constants.FIB(router.toString(),"ENDED"));
                 Thread.sleep(10*300);
             }
         };
