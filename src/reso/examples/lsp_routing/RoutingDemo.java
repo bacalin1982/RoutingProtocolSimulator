@@ -5,9 +5,7 @@ import reso.common.Node;
 import reso.ip.*;
 import reso.scheduler.AbstractScheduler;
 import reso.scheduler.Scheduler;
-import reso.utilities.FIBDumper;
 import reso.utilities.NetworkBuilder;
-import reso.utilities.NetworkGrapher;
 
 import java.io.*;
 
@@ -49,19 +47,6 @@ public class RoutingDemo {
 
             // Run simulation
             scheduler.run();
-
-            // Display forwarding table for each node
-            FIBDumper.dumpForAllRouters(network);
-
-            for (Node n: network.getNodes()) {
-                //IPAddress ndst= ((IPHost) n).getIPLayer().getInterfaceByName("lo0").getAddress();
-                IPAddress ndst= getRouterID(((IPHost) n).getIPLayer());
-                File f= new File("tmp/topology-routing-" + ndst + ".graphviz");
-                System.out.println("Writing file "+f);
-                Writer w= new BufferedWriter(new FileWriter(f));
-                NetworkGrapher.toGraphviz2(network, ndst, new PrintWriter(w));
-                w.close();
-            }
         }
         catch (Exception e) {
             System.err.println(e.getMessage());

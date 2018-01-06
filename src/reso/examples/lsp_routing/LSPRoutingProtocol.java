@@ -2,7 +2,6 @@ package reso.examples.lsp_routing;
 
 
 import reso.common.*;
-import reso.examples.dv_routing.DVRoutingEntry;
 import reso.ip.*;
 import reso.scheduler.AbstractScheduler;
 import reso.utilities.FIBDumper;
@@ -253,7 +252,7 @@ public class LSPRoutingProtocol extends AbstractApplication implements IPInterfa
         }
 
         if(! links.isEmpty()){
-            log(Constants._I+"shortestTravelComputation");
+            log(Constants._I+router.toString() + " calculating best routes ...");
             Graph g = new Graph(links);
             g.computeShortestDistance();
             Map<IPAddress, List<Point>> result = g.getRouterWithBestRoute(verbose);
