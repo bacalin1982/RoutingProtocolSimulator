@@ -2,8 +2,7 @@ package reso.examples.lsp_routing;
 
 import reso.ip.IPAddress;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class Graph {
     private List<Link> links;
@@ -36,7 +35,7 @@ public class Graph {
                 if(l.getSrc().toString().equals(p.getId().toString()))
                     p.addLink(l);
                 else if(l.getDest().toString().equals(p.getId().toString())){
-                    p.addLink(new Link(l.getDest(), l.getSrc(), l.getCost()));
+                    p.addLink(new Link(l.getDest(), l.getSrc(), l.getOif(), l.getCost()));
                 }
             }
         }
@@ -96,7 +95,7 @@ public class Graph {
         return storedPointIndex;
     }
 
-    public List<List<Point>> getResult(boolean debug){
+    /*public List<List<Point>> getResult(boolean debug){
         if (debug) {
             String output = "";
             int i = 0;
@@ -109,6 +108,29 @@ public class Graph {
             System.out.println(output);
         }
         return this.result;
+    }*/
+
+    public Map<IPAddress, List<Point>> getRouterWithBestRoute(boolean debug){
+        String output = "";
+        Map<IPAddress, List<Point>> routerWithBestRoute = new HashMap<>();
+        int i = 0;
+        for (List<Point> list : this.result) {
+            for (Point p : list) {
+                IPAddress routerIp = this.points.get(i).getId();
+                if(!routerWithBestRoute.containsKey(routerIp)){
+                    routerWithBestRoute.put(routerIp, new ArrayList<>());
+                }
+                routerWithBestRoute.get(routerIp).add(p);
+                if(debug) {
+                    output += Constants._I + "The shortest distance from IP " + routerIp.toString() + " to IP " + p.getId().toString() + " is " + p.getcostTotalFromSrc() + " with " + p.getListOfCostsFromSrc() + "\n";
+                }
+            }
+            i++;
+        }
+        if(debug) {
+            System.out.println(output);
+        }
+        return routerWithBestRoute;
     }
 
     private int getIndexOfPointWithIp(IPAddress ip){

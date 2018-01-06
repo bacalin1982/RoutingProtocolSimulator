@@ -1,15 +1,18 @@
 package reso.examples.lsp_routing;
 
 import reso.ip.IPAddress;
+import reso.ip.IPInterfaceAdapter;
 
 public class Link {
     private IPAddress src;
     private IPAddress dest;
+    private IPInterfaceAdapter oif;
     private int cost;
 
-    public Link(IPAddress src, IPAddress dest, int cost){
+    public Link(IPAddress src, IPAddress dest, IPInterfaceAdapter oif, int cost){
         this.src = src;
         this.dest = dest;
+        this.oif = oif;
         this.cost = cost;
     }
 
@@ -27,6 +30,10 @@ public class Link {
 
     public void setDest(IPAddress dest) {
         this.dest = dest;
+    }
+
+    public IPInterfaceAdapter getOif() {
+        return oif;
     }
 
     public int getCost() {
@@ -47,6 +54,6 @@ public class Link {
 
     @Override
     public String toString() {
-        return "Link from " + this.src + " to " + this.dest + " cost " + this.cost;
+        return "Link from " + this.src + " to " + this.dest + " " + oif.getName() + " " + " cost " + this.cost;
     }
 }

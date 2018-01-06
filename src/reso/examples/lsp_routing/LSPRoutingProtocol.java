@@ -2,12 +2,11 @@ package reso.examples.lsp_routing;
 
 
 import reso.common.*;
+import reso.examples.dv_routing.DVRoutingEntry;
 import reso.ip.*;
 import reso.scheduler.AbstractScheduler;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+
+import java.util.*;
 
 public class LSPRoutingProtocol extends AbstractApplication implements IPInterfaceListener, InterfaceAttrListener {
 
@@ -217,6 +216,8 @@ public class LSPRoutingProtocol extends AbstractApplication implements IPInterfa
             for (IPInterfaceAdapter iface : ip.getInterfaces()) {
                 if (iface instanceof IPLoopbackAdapter || iface.equals(src))
                     continue;
+                //Interface
+                lspMsg.setOif(iface);
                 //Create datagram
                 Datagram d = new Datagram(iface.getAddress(), IPAddress.BROADCAST, IP_PROTO_LSP, 1, lspMsg);
                 //Debug
@@ -229,31 +230,41 @@ public class LSPRoutingProtocol extends AbstractApplication implements IPInterfa
         }
     }
 
-   private Map<IPAddress, Integer> shortestTravelComputation(){
+   private Map<IPAddress, Integer> shortestTravelComputation() throws Exception{
         Map<IPAddress, Integer> bestRoute = new HashMap<>();
-        Point[] points;
-        int nbPoints;
         List<Link> links = new ArrayList<Link>();
-        int nbLinks;
 
         for(LSPMessage lspMsg: LSDB.values()){
             for(IPAddress ip: lspMsg.getAdjRouterIPList().keySet()){
-                links.add(new Link(lspMsg.getRouterIP(), ip, lspMsg.getAdjRouterIPList().get(ip)));
-                //System.out.println(getRouterID()+" to "+ip.toString()+" cost "+this.metric.get(ip));
+                links.add(new Link(lspMsg.getRouterIP(), ip, lspMsg.getOif(), lspMsg.getAdjRouterIPList().get(ip)));
             }
         }
 
         if(! links.isEmpty()){
+            log(Constants._I+"shortestTravelComputation");
             Graph g = new Graph(links);
             g.computeShortestDistance();
-            List<List<Point>> result = new ArrayList<>();
-            result = g.getResult(true);
+            Map<IPAddress, List<Point>> result = g.getRouterWithBestRoute(verbose);
             if (result != null){
-                //Je pense qu'il faut parser le result comme dans la fonction getResult mais en informant la FIB ici ...
-                //J'suis HS je vais dormir un peu :)
+                for(IPAddress routerIp: result.keySet()){
+                    for(Point p: result.get(routerIp)){
+                        String link = "";
+                        for(Link l: p.getLinks()){
+                            link += (!"".equals(link)?"->":"")+l.getDest();
+
+                            // ... update FIB ...
+                            LSPMessage lspMsg = this.LSDB.get(l.getDest());
+                            try{
+                                ip.addRoute(new LSPRoutingEntry(l.getSrc(), l.getOif(), lspMsg));
+                                debug(Constants._I+"Add route "+l.getSrc()+" on "+l.getOif().getName());
+                            }catch(Exception e){}
+                        }
+                        log(Constants._I+"Best route from "+routerIp+"-->"+p.getId()+" : "+link+" cost "+p.getcostTotalFromSrc());
+                    }
+                }
             }
             else{
-                System.out.println(Constants._E+Constants.DIJK_ERR);
+                log(Constants._E+Constants.DIJK_ERR);
             }
         }
 
