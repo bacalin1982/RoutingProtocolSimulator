@@ -5,6 +5,7 @@ import reso.common.*;
 import reso.examples.dv_routing.DVRoutingEntry;
 import reso.ip.*;
 import reso.scheduler.AbstractScheduler;
+import reso.utilities.FIBDumper;
 
 import java.util.*;
 
@@ -110,11 +111,20 @@ public class LSPRoutingProtocol extends AbstractApplication implements IPInterfa
             }
         };
 
+        AbstractTimer fibTimer = new AbstractTimer(scheduler, 10, true) {
+            @Override
+            protected void run() throws Exception {
+                // Display forwarding table for each node
+                FIBDumper.dumpForAllRouters(router.getNetwork());
+                Thread.sleep(10*300);
+            }
+        };
+
         helloTimer.start();
         lspTimer.start();
         debugTimer.start();
         dijkstraTimer.start();
-
+        fibTimer.start();
     }
 
     @Override
