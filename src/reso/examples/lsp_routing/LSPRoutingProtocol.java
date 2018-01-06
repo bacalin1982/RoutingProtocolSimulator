@@ -259,7 +259,7 @@ public class LSPRoutingProtocol extends AbstractApplication implements IPInterfa
                                 debug(Constants._I+"Add route "+l.getSrc()+" on "+l.getOif().getName());
                             }catch(Exception e){}
                         }
-                        log(Constants._I+"Best route from "+routerIp+"-->"+p.getId()+" : " + routerIp + "->"+link+" cost "+p.getcostTotalFromSrc());
+                        log(Constants._I+ router.toString() +" has best route from "+routerIp+"-->"+p.getId()+" : " + routerIp + "->"+link+" cost "+p.getcostTotalFromSrc());
                     }
                 }
             }

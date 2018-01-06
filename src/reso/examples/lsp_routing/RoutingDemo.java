@@ -51,7 +51,7 @@ public class RoutingDemo {
             scheduler.run();
 
             // Display forwarding table for each node
-            /*FIBDumper.dumpForAllRouters(network);
+            FIBDumper.dumpForAllRouters(network);
 
             for (Node n: network.getNodes()) {
                 //IPAddress ndst= ((IPHost) n).getIPLayer().getInterfaceByName("lo0").getAddress();
@@ -61,7 +61,7 @@ public class RoutingDemo {
                 Writer w= new BufferedWriter(new FileWriter(f));
                 NetworkGrapher.toGraphviz2(network, ndst, new PrintWriter(w));
                 w.close();
-            }*/
+            }
         }
         catch (Exception e) {
             System.err.println(e.getMessage());
