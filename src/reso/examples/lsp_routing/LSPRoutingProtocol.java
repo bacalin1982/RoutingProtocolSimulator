@@ -249,7 +249,7 @@ public class LSPRoutingProtocol extends AbstractApplication implements IPInterfa
                 for(IPAddress routerIp: result.keySet()){
                     for(Point p: result.get(routerIp)){
                         String link = "";
-                        for(Link l: p.getLinks()){
+                        for(Link l: p.getListOfCostsFromSrc()){
                             link += (!"".equals(link)?"->":"")+l.getDest();
 
                             // ... update FIB ...
@@ -259,7 +259,7 @@ public class LSPRoutingProtocol extends AbstractApplication implements IPInterfa
                                 debug(Constants._I+"Add route "+l.getSrc()+" on "+l.getOif().getName());
                             }catch(Exception e){}
                         }
-                        log(Constants._I+"Best route from "+routerIp+"-->"+p.getId()+" : "+link+" cost "+p.getcostTotalFromSrc());
+                        log(Constants._I+"Best route from "+routerIp+"-->"+p.getId()+" : " + routerIp + "->"+link+" cost "+p.getcostTotalFromSrc());
                     }
                 }
             }
