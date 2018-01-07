@@ -9,3 +9,6 @@ src/META-INF/*
 #Java project
 *.xml
 *.class
+
+#Word
+~$*.docx
