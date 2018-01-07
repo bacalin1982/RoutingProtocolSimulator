@@ -8,7 +8,7 @@ src/META-INF/*
 
 #Java project
 *.xml
-*.class
+out/*.class
 
 #Word
 ~$*.docx
